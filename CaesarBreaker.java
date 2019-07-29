@@ -6,11 +6,23 @@ import edu.duke.FileResource;
 public class CaesarBreaker {
 	
 	public static void main(String[] args) {
-		String decrypt = "every auto";
-		freqs = countLetters(decrypt);
+		String encrypted = "dudqx ztsn";
+		freqs = countLetters(encrypted);
 		int mkey = findKey(maxIndex(freqs));
-        System.out.print(CaesarCipher.encrypt(decrypt,mkey));
+        System.out.print("With key of  "+mkey+", message is: "+decrypt(encrypted, mkey));
     }
+	
+    /**
+     * Decrypt Caesar Cipher with a given key.
+     * @param   encrypted String to be decrypted
+     * @param   key key for decrypting.
+     * @return  decrypted msg
+     */
+	public static String decrypt(String encrypted, int key) {
+		CaesarCipher cc = new CaesarCipher();
+		String message = CaesarCipher.encrypt(encrypted, 26-key);
+		return message;
+	}
 	
 	 /**
      * Count occurrences of letters in string.
@@ -58,11 +70,11 @@ public class CaesarBreaker {
 	public static int findKey(int maxValIndex) {
 		int key = 0;
 		if (maxValIndex>4) {
-			key = 26-maxValIndex+4; 
+			key = maxValIndex+4; 
 			// working with left shift
 		}
 		else if (maxValIndex<4) {
-			key = 4-maxValIndex;
+			key = 26-maxValIndex+2;
 			// working with right shift
 		}
 		else key=0;
@@ -70,17 +82,8 @@ public class CaesarBreaker {
 		return key; 
 	}
 	
-    /**
-     * Decrypt Caesar Cipher with a given key.
-     * @param   encrypted String to be decrypted
-     * @param   key key for decrypting.
-     * @return  decrypted msg
-     */
-	public static String decrypt(String encrypted, int key) {
-		CaesarCipher cc = new CaesarCipher();
-		String message = CaesarCipher.encrypt(encrypted, 26 - key);
-		return message;
-	}
+
+
 	
 	
     /**

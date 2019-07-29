@@ -1,20 +1,33 @@
 package com.bram;
-
+import java.util.Arrays;
+import com.bram.CaesarCipher;
 import edu.duke.FileResource;
 
 public class CaesarBreaker {
+	
+	public static void main(String[] args) {
+		String decrypt = "every auto";
+		freqs = countLetters(decrypt);
+		int mkey = findKey(maxIndex(freqs));
+        System.out.print(CaesarCipher.encrypt(decrypt,mkey));
+    }
 	
 	 /**
      * Count occurrences of letters in string.
      * @param   msg String for which number of letters is to be calculated
      * @return  int array containing frequency of letters
      */
-	public static void countLetters(String msg) {
+	// finds the right letters 
+	public static int[] countLetters(String msg) {
 		for (int i=0;i<msg.length();i++) {
 			for (int j=0;j<26;j++) {
-				if (string[i]===)
+				if (msg.charAt(i)==alphabet.charAt(j)) {
+					freqs[j]++;
+					// System.out.print(msg.charAt(i));
+				}
 			}
 		}
+		return freqs; 
 	}
 	
     /**
@@ -22,7 +35,40 @@ public class CaesarBreaker {
      * @param   vals array of ints to be checked.
      * @return  index of max value in ints array
      */
-	public static void maxIndex() {}
+	// returns most frequent letter position in array
+	public static int maxIndex(int[] freqs) {
+		int maxVal = 0;
+		int maxValIndex=0;
+		for (int j=0;j<26;j++) {
+			if (freqs[j]>maxVal){
+				maxVal=freqs[j];
+				maxValIndex=j;
+			}
+		}
+		// System.out.print("4 is now at "+maxValIndex);
+		return maxValIndex; 
+	}
+	
+    /**
+     * Method for finding encryption key, based on most common occurrences of letter
+     * in encrypted msg, assuming that it represents 'e';
+     * @param   msg encrypted string for which key is to be found
+     * @return  encryption key for msg
+     */
+	public static int findKey(int maxValIndex) {
+		int key = 0;
+		if (maxValIndex>4) {
+			key = 26-maxValIndex+4; 
+			// working with left shift
+		}
+		else if (maxValIndex<4) {
+			key = 4-maxValIndex;
+			// working with right shift
+		}
+		else key=0;
+		// working with no shift
+		return key; 
+	}
 	
     /**
      * Decrypt Caesar Cipher with a given key.
@@ -30,9 +76,10 @@ public class CaesarBreaker {
      * @param   key key for decrypting.
      * @return  decrypted msg
      */
-	public String decrypt(String encrypted, int key) {
+	public static String decrypt(String encrypted, int key) {
 		CaesarCipher cc = new CaesarCipher();
-		String message = cc.encrypt(encrypted, 26 - key);
+		String message = CaesarCipher.encrypt(encrypted, 26 - key);
+		return message;
 	}
 	
 	
@@ -44,12 +91,7 @@ public class CaesarBreaker {
      * @return  uppercase or lowercase decrypted character
      */
 	
-    /**
-     * Method for finding encryption key, based on most common occurrences of letter
-     * in encrypted msg, assuming that it represents 'e';
-     * @param   msg encrypted string for which key is to be found
-     * @return  encryption key for msg
-     */
+
 	
     /**
      * Method for decrypting meg, encrypted with one key.
@@ -92,6 +134,12 @@ public class CaesarBreaker {
         return decryptTwoKeys(fr.asString());
 	 }
 	 
-	 private static int[] freqs = new int[26];
-	 private static final String alphabet = "abcdefghijklmnopqrstuvwxyz";
+	 private String decryptTwoKeys(String asString) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	private static final String alphabet = "abcdefghijklmnopqrstuvwxyz";
+	private static int[] freqs = new int[26]; 
 }

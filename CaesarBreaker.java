@@ -9,9 +9,8 @@ import edu.duke.FileResource;
 public class CaesarBreaker {
 	
 	public static void main(String[] args) {
-		String msg="Dudqx! Atsn";
-        System.out.print(decryptMsg(msg)+"\n");
-        System.out.print(decrypt(msg,3));
+		String msg="Dudqx! Ztsn";
+		System.out.println("Derypted Message: "+decryptMsg(msg)+"\n");
 	}
 
 	/**
@@ -27,7 +26,6 @@ public class CaesarBreaker {
 		for (int i=0;i<sb.length();i++) {
 			sb.setCharAt(i, decryptChar(encrypted.charAt(i),key));
 		}
-		System.out.println("Derypted Message: " + sb.toString());
 		return sb.toString();
 	}
 	
@@ -47,7 +45,7 @@ public class CaesarBreaker {
 			}
 		}
 		/* DEBUGGER */
-		System.out.println("countLetters :" + Arrays.toString(freqs));
+		// System.out.println("countLetters :" + Arrays.toString(freqs));
 		return freqs; 
 	}
 	
@@ -65,7 +63,8 @@ public class CaesarBreaker {
 				maxValIndex=j;
 			}
 		}
-		System.out.print("4 is now at "+maxValIndex+"\n");
+		/* DEBUGGER */
+		// System.out.print("4 is now at "+maxValIndex+"\n");
 		return maxValIndex; 
 	}
 	
@@ -79,17 +78,15 @@ public class CaesarBreaker {
      */
 	public static int findKey(int maxValIndex) {
 		int key = 0;
-		if (maxValIndex>4) {
-			key = maxValIndex+4; 
-			// working with left shift
+		if (maxValIndex<4) {
+			key = 4-maxValIndex; 
 		}
-		else if (maxValIndex<4) {
-			key = 26-maxValIndex+2;
-			// working with right shift
+		else if (maxValIndex>4) {
+			key = 26-maxValIndex;
 		}
 		else key=0;
-		// working with no shift
-		System.out.println("Key is "+key);
+		/* DEBUGGER */
+		// System.out.println("Key is "+key);
 		return key; 
 	}
 	
@@ -105,7 +102,7 @@ public class CaesarBreaker {
 		String shiftedLower = alphabet.substring(key) + alphabet.substring(0, key);
 		String shiftedUpper = ALPHABET.substring(key) + ALPHABET.substring(0, key);
 		String chStLow=String.valueOf(ch).toLowerCase();
-		int genIndex = shiftedLower.indexOf(chStLow);
+		int genIndex = alphabet.indexOf(chStLow);
 		if (genIndex > -1){
 			if (Character.isUpperCase(ch)) {
 				return shiftedUpper.charAt(genIndex);
@@ -116,13 +113,13 @@ public class CaesarBreaker {
 	}
 	
     /**
-     * Decrypt Caesar Cipher with a given key.
+     * Decrypt using CaesarCipher with a given key.
      * @param   encrypted String to be decrypted
      * @param   key key for decrypting.
      * @return  decrypted msg
      */
 	
-		public static String decrypt(String encrypted, int key) {
+	public static String decrypt(String encrypted, int key) {
 		String message = CaesarCipher.encrypt(encrypted, 26-key);
 		return message;
 	}

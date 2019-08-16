@@ -1,5 +1,6 @@
 package com.bram;
 import java.util.ArrayList;
+import java.lang.Math;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,8 +10,9 @@ import edu.duke.FileResource;
 public class CaesarBreaker {
 	
 	public static void main(String[] args) {
+		System.out.print(stringMerge("ACE", "BDF"));
 		String msg="Dudqx! Ztsn";
-		System.out.println("Derypted Message: "+decryptMsg(msg)+"\n");
+		System.out.println("Derypted Message: "+decryptMsg(msg,1)+"\n");
 	}
 
 	/**
@@ -19,9 +21,10 @@ public class CaesarBreaker {
      * @return  decrypted msg with key guessed
      */
 	
-	public static String decryptMsg(String encrypted) {
-		countLetters(encrypted);
-		int key = findKey(maxIndex(freqs));
+	public static String decryptMsg(String encrypted, int keyNum) {
+		int[] freqs = new int[26];
+		countLetters(encrypted, freqs);
+		int key = findKey(maxIndex(freqs), keyNum);
 		StringBuilder sb = new StringBuilder(encrypted);
 		for (int i=0;i<sb.length();i++) {
 			sb.setCharAt(i, decryptChar(encrypted.charAt(i),key));
@@ -35,7 +38,7 @@ public class CaesarBreaker {
     * @return  int array containing frequency of letters
     */
 
-	public static int[] countLetters(String msg) {
+	public static int[] countLetters(String msg, int[] freqs) {
 		for (int i=0;i<msg.length();i++) {
 			for (int j=0;j<26;j++) {
 				if (msg.charAt(i)==alphabet.charAt(j)) {
@@ -76,7 +79,7 @@ public class CaesarBreaker {
      * @param   msg encrypted string for which key is to be found
      * @return  encryption key for msg
      */
-	public static int findKey(int maxValIndex) {
+	public static int findKey(int maxValIndex, int keyNum) {
 		int key = 0;
 		if (maxValIndex<4) {
 			key = 4-maxValIndex; 
@@ -86,7 +89,7 @@ public class CaesarBreaker {
 		}
 		else key=0;
 		/* DEBUGGER */
-		// System.out.println("Key is "+key);
+		System.out.println("Key "+keyNum+ " is "+key);
 		return key; 
 	}
 	
@@ -134,6 +137,17 @@ public class CaesarBreaker {
      * @return  string containing every other letter from input
      */
 	
+	public static String stringSplit(String encrypted, int start) {
+		StringBuilder sb = new StringBuilder(encrypted);
+		for (int i=start+1;i<encrypted.length()-2;i++) {
+			sb.delete(i,i+1);
+		}
+		System.out.print(sb.toString());
+		// halfOfString
+		return sb.toString();
+	}
+	
+	
     /**
      * Helper function for merging string split with halfOfString
      * @param   s0  substring starting from index 0
@@ -141,12 +155,30 @@ public class CaesarBreaker {
      * @return  original string split with halfOfString
      */
 	
+	public static String stringMerge(String s0, String s1) {
+		String merged = "";
+		StringBuilder sbm = new StringBuilder(merged);
+		for (int i=0;i<s0.length()+s1.length();i++) {
+			if (i==0)sbm.append(s0.charAt(0));
+			else if (i%2==0) sbm.append(s0.charAt(i/2));
+			else sbm.append(s1.charAt(Math.round(i/2)));
+		}
+		return sbm.toString();
+	}
+	
     /**
      * This method attempts to determine the two keys used to encrypt the message,
      * prints the two keys, and then returns the decrypted String with those two keys.
      * @param   encrypted   string encrypted with encryptTwoKeys
      * @return  decrypted string
      */
+
+	public static String decryptMsgTwoKeys(String encrypted) {
+		String stringKey1=stringSplit(encrypted, 0);
+		String stringKey2=stringSplit(encrypted, 1);
+		return stringMerge(decryptMsg(stringKey1,1),decryptMsg(stringKey2,2));
+	}
+	
 	
     /**
      * Decrypt text encrypted with two keys.
@@ -169,5 +201,4 @@ public class CaesarBreaker {
 	
 	private static final String alphabet = "abcdefghijklmnopqrstuvwxyz";
 	private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	private static int[] freqs = new int[26]; 
 }

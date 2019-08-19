@@ -1,18 +1,16 @@
-package com.bram;
+package com.bram.caesar;
 import java.util.ArrayList;
 import java.lang.Math;
 import java.util.Arrays;
 import java.util.List;
 
-import com.bram.CaesarCipher;
+import com.bram.caesar.CaesarCipher;
 import edu.duke.FileResource;
 
 public class CaesarBreaker {
 	
 	public static void main(String[] args) {
-		System.out.print(stringMerge("ACE", "BDF"));
-		String msg="Dudqx! Ztsn";
-		System.out.println("Derypted Message: "+decryptMsg(msg,1)+"\n");
+		System.out.println("Decrypted message is: "+decryptMsgTwoKeys("gfkmnxnskedfdfdfdfd"));
 	}
 
 	/**
@@ -85,7 +83,7 @@ public class CaesarBreaker {
 			key = 4-maxValIndex; 
 		}
 		else if (maxValIndex>4) {
-			key = 26-maxValIndex;
+			key = 30-maxValIndex;
 		}
 		else key=0;
 		/* DEBUGGER */
@@ -139,11 +137,10 @@ public class CaesarBreaker {
 	
 	public static String stringSplit(String encrypted, int start) {
 		StringBuilder sb = new StringBuilder(encrypted);
-		for (int i=start+1;i<encrypted.length()-2;i++) {
+		int halfL=encrypted.length()/2;
+		for (int i=start;i<encrypted.length()-halfL;i++) {
 			sb.delete(i,i+1);
 		}
-		System.out.print(sb.toString());
-		// halfOfString
 		return sb.toString();
 	}
 	
@@ -158,9 +155,10 @@ public class CaesarBreaker {
 	public static String stringMerge(String s0, String s1) {
 		String merged = "";
 		StringBuilder sbm = new StringBuilder(merged);
-		for (int i=0;i<s0.length()+s1.length();i++) {
+		int totalLength=s0.length()+s1.length();
+		for (int i=0;i<totalLength;i++) {
 			if (i==0)sbm.append(s0.charAt(0));
-			else if (i%2==0) sbm.append(s0.charAt(i/2));
+			else if (i%2==0 && i<totalLength-1) sbm.append(s0.charAt(i/2));
 			else sbm.append(s1.charAt(Math.round(i/2)));
 		}
 		return sbm.toString();
@@ -174,9 +172,13 @@ public class CaesarBreaker {
      */
 
 	public static String decryptMsgTwoKeys(String encrypted) {
+		System.out.println("Double-encrypted message is: "+encrypted);
 		String stringKey1=stringSplit(encrypted, 0);
 		String stringKey2=stringSplit(encrypted, 1);
-		return stringMerge(decryptMsg(stringKey1,1),decryptMsg(stringKey2,2));
+		String firstHalf = decryptMsg(stringKey2,2);
+		String nextHalf = decryptMsg(stringKey1,1);
+		if (nextHalf.length()<firstHalf.length()) nextHalf+=" ";
+		return stringMerge(firstHalf,nextHalf);
 	}
 	
 	
@@ -190,13 +192,10 @@ public class CaesarBreaker {
 	
 	 public String decryptFileTwoKeys() {
         FileResource fr = new FileResource();
-        return decryptTwoKeys(fr.asString());
+        return decryptMsgTwoKeys(fr.asString());
 	 }
 	 
-	 private String decryptTwoKeys(String asString) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	
 	private static final String alphabet = "abcdefghijklmnopqrstuvwxyz";

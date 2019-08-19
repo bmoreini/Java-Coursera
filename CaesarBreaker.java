@@ -10,7 +10,7 @@ import edu.duke.FileResource;
 public class CaesarBreaker {
 	
 	public static void main(String[] args) {
-		System.out.println("Decrypted message is: "+decryptMsgTwoKeys("gfkmnxnskedfdfdfdfd"));
+		System.out.print("Decrypted message is: "+decryptFileTwoKeys());
 	}
 
 	/**
@@ -25,7 +25,7 @@ public class CaesarBreaker {
 		int key = findKey(maxIndex(freqs), keyNum);
 		StringBuilder sb = new StringBuilder(encrypted);
 		for (int i=0;i<sb.length();i++) {
-			sb.setCharAt(i, decryptChar(encrypted.charAt(i),key));
+			sb.setCharAt(i, decryptChar(encrypted.charAt(i),key,i));
 		}
 		return sb.toString();
 	}
@@ -70,7 +70,6 @@ public class CaesarBreaker {
 	}
 	
 	
-	
     /**
      * Method for finding encryption key, based on most common occurrences of letter
      * in encrypted msg, assuming that it represents 'e';
@@ -99,7 +98,7 @@ public class CaesarBreaker {
 	 * @return  uppercase or lowercase decrypted character
 	 */
 	
-	public static char decryptChar(char ch, int key) {
+	public static char decryptChar(char ch, int key, int chPos) {
 		String shiftedLower = alphabet.substring(key) + alphabet.substring(0, key);
 		String shiftedUpper = ALPHABET.substring(key) + ALPHABET.substring(0, key);
 		String chStLow=String.valueOf(ch).toLowerCase();
@@ -110,7 +109,10 @@ public class CaesarBreaker {
 			}
 			else return shiftedLower.charAt(genIndex);
 		}
-		else return ch;
+		else {
+			nonAlpha.add(ch);
+			return '~';
+		}
 	}
 	
     /**
@@ -125,7 +127,6 @@ public class CaesarBreaker {
 		return message;
 	}
 
-	
 
     /**
      * This method should return a new String that is every 
@@ -165,6 +166,28 @@ public class CaesarBreaker {
 	}
 	
     /**
+     * This method references a decrypted string with double tildes standing for
+     * non-Alpha characters, and replaces them with a single character from a list of characters. 
+     * @param   tildes string with double tildes
+     * @return  fullMsg string with substituted characters and removed dupes
+     */
+	
+	public static String returnNonAlphas(String tildes) {
+		String fullMsg=tildes;
+		StringBuilder fm = new StringBuilder(fullMsg);
+		for (int i=0;i<fm.length();i++) {
+			if (fm.charAt(i)=='~') {
+				if (!nonAlpha.isEmpty()) {
+					fm.setCharAt(i,nonAlpha.get(0));
+					fm.delete(i+1,i+2);
+					nonAlpha.remove(0);
+				}
+			}
+		}
+		return fm.toString();
+	}
+	
+    /**
      * This method attempts to determine the two keys used to encrypt the message,
      * prints the two keys, and then returns the decrypted String with those two keys.
      * @param   encrypted   string encrypted with encryptTwoKeys
@@ -172,32 +195,31 @@ public class CaesarBreaker {
      */
 
 	public static String decryptMsgTwoKeys(String encrypted) {
-		System.out.println("Double-encrypted message is: "+encrypted);
+		System.out.print("Double-encrypted message is: "+encrypted);
 		String stringKey1=stringSplit(encrypted, 0);
 		String stringKey2=stringSplit(encrypted, 1);
 		String firstHalf = decryptMsg(stringKey2,2);
 		String nextHalf = decryptMsg(stringKey1,1);
 		if (nextHalf.length()<firstHalf.length()) nextHalf+=" ";
-		return stringMerge(firstHalf,nextHalf);
+		String decrypted=stringMerge(firstHalf,nextHalf);
+		return returnNonAlphas(decrypted);
 	}
 	
 	
+	
     /**
-     * Decrypt text encrypted with two keys.
-     * @param   encrypted   text to be decrypted
-     * @param   key0    first encryption key
-     * @param   key1    second encryption key
-     * @return  string decrypted using provided keys
+     * Load encrypted message from file, return decrypted message
+     * @param   [select file]
+     * @return  file version
      */
 	
-	 public String decryptFileTwoKeys() {
+	 public static String decryptFileTwoKeys() {
         FileResource fr = new FileResource();
         return decryptMsgTwoKeys(fr.asString());
 	 }
 	 
 
-
-	
+	private static List<Character> nonAlpha = new ArrayList<>();
 	private static final String alphabet = "abcdefghijklmnopqrstuvwxyz";
 	private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 }
